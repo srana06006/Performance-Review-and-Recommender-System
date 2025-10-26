@@ -1,6 +1,47 @@
 # Performance-Review-and-Recommender-System
 
 An AI-driven service that scores employee promotion readiness and recommends personalized training plans.
+An AI-Driven Framework for Promotion Assessment and Personalized Workforce Development
+
+1. Introduction
+Organizations today manage increasingly complex and distributed workforces, making traditional performance reviews slow, subjective, and prone to bias. The Performance Review and Recommender (PRR) system introduces an AI-assisted approach to employee evaluation — integrating data from projects, feedback, learning activities, and behavioral indicators to provide:
+•	Promotion readiness scoring: Identifying employees most likely ready for advancement based on historical performance patterns.
+•	Personalized development planning: Recommending training courses, mentorships, and projects to close specific skill gaps for those not yet ready for promotion.
+The PRR system supports data-driven HR decision-making while maintaining transparency, fairness, and explainability. It embodies responsible AI principles by combining machine learning analytics with human oversight in the promotion process.
+
+2. Objectives
+a.	Automate performance evaluations using structured and unstructured HR data.
+b.	Predict promotion readiness through historical pattern recognition and behavioral modeling.
+c.	Provide individualized upskilling pathways via a recommendation engine.
+d.	Support fairness and explainability, enabling HR managers to audit AI decisions.
+e.	Offer an interactive dashboard for both managers and employees to visualize insights.
+
+3. System Overview
+
+3.1 Core Modules
+Module	Function
+•	Data Ingestion Layer:	Collects and integrates data from HRIS, LMS, project management, and feedback systems.
+•	Performance Evaluation Engine:	Uses machine learning models (LightGBM, CatBoost) to compute promotion readiness scores.
+•	Recommendation Engine	Matches: skill gaps with relevant courses, mentorships, and career development resources.
+•	HR Dashboard:	Provides HR managers a visual interface to view scores, approve promotions, and track learning outcomes.
+•	Employee Portal:	Displays personal progress reports, readiness scores, and recommended learning paths.
+
+3.2 Data Sources
+•	HR Information Systems (HRIS): Employee demographics, promotions, performance history.
+•	Project Management Tools: Task completion, deadlines, quality metrics.
+•	Learning Management Systems (LMS): Completed courses, skill achievements, certifications.
+•	360° Feedback: Peer and manager reviews, sentiment analysis.
+•	Incident/Recognition Logs: Behavioral insights and achievements.
+
+4. Dataset Generation and Architecture
+4.1 Synthetic Data Design
+A large synthetic dataset was generated to emulate a realistic corporate environment:
+•	Employees: 500
+•	Time Range: 10 years (2005–2014)
+•	Daily Tasks: 4–5 per employee
+•	Departments: IT, Engineering, Sales, HR, Finance, Marketing, Operations, Software Development
+
+<img width="468" height="645" alt="image" src="https://github.com/user-attachments/assets/7dfdaf62-69b2-42b0-aac9-2973a8ac4415" />
 
 
 ## Quickstart
