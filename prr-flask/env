@@ -1,0 +1,30 @@
+# -------------------------------
+# Flask Environment Configuration
+# -------------------------------
+
+# Enables Flask debug mode and auto-reload during development.
+FLASK_ENV=development
+
+# Database connection string.
+# Uses SQLite, which creates a local file named 'prr.db' in your project folder.
+# Later, you can replace it with a PostgreSQL URL:
+# postgresql+psycopg2://username:password@localhost:5432/prr
+DATABASE_URL=sqlite:///instance/prr.db
+
+# Directory where your trained ML model and related files are stored.
+# These files include: model.pkl, features.json, shap_background.npy
+MODEL_DIR=ml/artifacts
+
+# -------------------------------
+# Optional Configuration Settings
+# -------------------------------
+
+# Promotion decision thresholds.
+PROMOTE_THRESH=0.72
+BORDERLINE_LOW=0.60
+
+# Flask secret key for sessions or API authentication (change for production).
+SECRET_KEY=dev_secret_key_change_me
+
+# Application logging level: DEBUG, INFO, WARNING, ERROR
+LOG_LEVEL=DEBUG

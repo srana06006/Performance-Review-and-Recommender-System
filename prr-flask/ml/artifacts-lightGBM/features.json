@@ -1,0 +1,1 @@
+{"feature_order": ["okr_attainment", "feedback_mean", "recognitions", "courses_completed", "on_time_ratio", "quality_mean", "velocity_total", "impact_total", "incidents_weight"], "model_type": "LightGBM", "calibrated": true, "best_iteration": 35}

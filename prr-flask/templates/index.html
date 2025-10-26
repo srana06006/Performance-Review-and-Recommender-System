@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Performance Review and Recommender (PRR) Dashboard</title>
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 + Babel for JSX (no build step) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div id="root" class="p-6 mx-auto max-w-6xl"></div>
+
+  <script type="text/babel">
+    const {useState, useEffect, useMemo} = React;
+
+    function Card({title, subtitle, children, right}) {
+      return (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h2 className="text-lg font-semibold">{title}</h2>
+              {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+            </div>
+            {right}
+          </div>
+          <div>{children}</div>
+        </div>
+      );
+    }
+
+    function Stat({label, value, badge}){
+      return (
+        <div className="flex items-center gap-3 py-1">
+          <div className="text-sm text-slate-500 w-48">{label}</div>
+          <div className="font-medium">{value}</div>
+          {badge}
+        </div>
+      );
+    }
+
+    function Badge({children, color="blue"}){
+      const cls = {
+        green:"bg-green-50 text-green-700 ring-1 ring-green-200",
+        yellow:"bg-yellow-50 text-yellow-800 ring-1 ring-yellow-200",
+        red:"bg-red-50 text-red-700 ring-1 ring-red-200",
+        blue:"bg-blue-50 text-blue-700 ring-1 ring-blue-200"
+      }[color] || "bg-slate-100 text-slate-700 ring-1 ring-slate-200";
+      return <span className={`text-xs px-2 py-1 rounded-full ${cls}`}>{children}</span>;
+    }
+
+    function useLocalStorage(key, initial){
+      const [val,setVal] = useState(()=>{
+        try{ const v=localStorage.getItem(key); return v!==null?JSON.parse(v):initial; }catch{ return initial; }
+      });
+      useEffect(()=>{ try{ localStorage.setItem(key, JSON.stringify(val)); }catch{} },[key,val]);
+      return [val,setVal];
+    }
+
+    function App(){
+      const [baseUrl,setBaseUrl] = useLocalStorage('prr_base_url', 'http://127.0.0.1:5000');
+      const [employeeId,setEmployeeId] = useLocalStorage('prr_emp_id', 1);
+      const [asOf,setAsOf] = useLocalStorage('prr_as_of', '2014-12-31');
+
+      const [health,setHealth] = useState(null);
+      const [loading,setLoading] = useState(false);
+      const [error,setError] = useState(null);
+
+      const [score,setScore] = useState(null);
+      const [plan,setPlan] = useState(null);
+      const [explain,setExplain] = useState(null);
+
+      const api = useMemo(()=>({
+        health: () => fetch(`${baseUrl}/v1/ingest/health`).then(r=>r.json()),
+        score: (id,asOf) => fetch(`${baseUrl}/v1/promotion/score`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({employee_id:Number(id), as_of: asOf})
+        }).then(r=>r.json()),
+        plan: (id,asOf) => fetch(`${baseUrl}/v1/plan/recommend`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({employee_id:Number(id), as_of: asOf})
+        }).then(r=>r.json()),
+        explain: (id,asOf) => fetch(`${baseUrl}/v1/explain/local?employee_id=${Number(id)}&as_of=${encodeURIComponent(asOf)}`)
+          .then(r=>r.json()),
+      }),[baseUrl]);
+
+      const runHealth = async()=>{
+        setError(null); setHealth(null);
+        try{ const h = await api.health(); setHealth(h); }catch(e){ setError(String(e)); }
+      };
+
+      const fetchAll = async()=>{
+        setLoading(true); setError(null);
+        setScore(null); setPlan(null); setExplain(null);
+        try{
+          const [s, p, ex] = await Promise.all([
+            api.score(employeeId, asOf),
+            api.plan(employeeId, asOf),
+            api.explain(employeeId, asOf)
+          ]);
+          setScore(s); setPlan(p); setExplain(ex);
+        }catch(e){ setError(String(e)); }
+        finally{ setLoading(false); }
+      };
+
+      const decisionColor = (d)=> d==='PROMOTE'? 'green' : (d==='BORDERLINE'? 'yellow' : 'red');
+
+      return (
+        <div className="space-y-6">
+          <header className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Performance Review and Recommender (PRR) Dashboard</h1>
+              <p className="text-slate-600">Promotion Readiness & Training Planner</p>
+            </div>
+            <button onClick={runHealth} className="px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800">Health Check</button>
+          </header>
+
+          <Card title="Settings" subtitle="Point this UI at your running Flask API and choose an employee">
+            <div className="grid md:grid-cols-4 gap-4">
+              <label className="block">
+                <div className="text-sm text-slate-600 mb-1">Base URL</div>
+                <input className="w-full px-3 py-2 border rounded-lg" value={baseUrl} onChange={e=>setBaseUrl(e.target.value)} />
+              </label>
+              <label className="block">
+                <div className="text-sm text-slate-600 mb-1">Employee ID</div>
+                <input type="number" min="1" className="w-full px-3 py-2 border rounded-lg" value={employeeId}
+                  onChange={e=>setEmployeeId(e.target.value)} />
+              </label>
+              <label className="block">
+                <div className="text-sm text-slate-600 mb-1">As of</div>
+                <input type="date" className="w-full px-3 py-2 border rounded-lg" value={asOf}
+                  onChange={e=>setAsOf(e.target.value)} />
+              </label>
+              <div className="flex items-end">
+                <button onClick={fetchAll} className="w-full px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50" disabled={loading}>
+                  {loading? 'Fetching…' : 'Fetch All'}
+                </button>
+              </div>
+            </div>
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+            {health && <p className="mt-3 text-sm text-green-700">API Health: {JSON.stringify(health)}</p>}
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card title="Promotion Readiness" subtitle="AI decision & score"
+                  right={score && <Badge color={decisionColor(score.decision)}>{score.decision}</Badge>}>
+              {!score && <p className="text-slate-500">Run "Fetch All" to see results.</p>}
+              {score && (
+                <div className="space-y-1">
+                  <Stat label="Employee" value={`${score.employee || ''} (ID ${score.employee_id})`} />
+                  <Stat label="As of" value={score.as_of} />
+                  <Stat label="Readiness Score" value={score.readiness_score?.toFixed?.(3) ?? score.readiness_score} />
+                  <Stat label="Decision" value={score.decision} badge={<Badge color={decisionColor(score.decision)}>{score.decision}</Badge>} />
+                  <Stat label="Confidence" value={score.confidence} />
+                </div>
+              )}
+            </Card>
+
+            <Card title="Development Plan" subtitle="Gaps, courses, and mentorship">
+              {!plan && <p className="text-slate-500">Run "Fetch All" to see results.</p>}
+              {plan && (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {plan.gaps?.map((g,i)=> <Badge key={i}>{g}</Badge>)}
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Plan Items</h3>
+                    <ul className="space-y-2">
+                      {plan.plan?.items?.map((it,idx)=> (
+                        <li key={idx} className="p-3 border rounded-xl">
+                          <div className="text-sm text-slate-500">{it.type}</div>
+                          <div className="font-medium">{it.title || it.name}</div>
+                          {it.provider && <div className="text-sm">{it.provider} · {it.duration_h}h</div>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Milestones</h3>
+                    <ol className="list-decimal ml-5 space-y-1">
+                      {plan.plan?.milestones?.map((m, i)=> <li key={i}>{m.goal} <span className="text-slate-500">(Day {m.day})</span></li>)}
+                    </ol>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          <Card title="Top Factors" subtitle="Feature contributions (proxy)">
+            {!explain && <p className="text-slate-500">Run "Fetch All" to see results.</p>}
+            {explain && (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-slate-500">
+                    <th className="py-2">Feature</th>
+                    <th className="py-2">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {explain.top_factors?.map((f, i)=> (
+                    <tr key={i} className="border-t">
+                      <td className="py-2">{f.feature}</td>
+                      <td className="py-2">{typeof f.value === 'number' ? f.value.toFixed(3) : String(f.value)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Card>
+
+          <footer className="text-center text-xs text-slate-500 pt-6">PRR Demo UI · Connects to your Flask API</footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
