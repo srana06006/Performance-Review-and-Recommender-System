@@ -41,8 +41,6 @@ A large synthetic dataset was generated to emulate a realistic corporate environ
 •	Daily Tasks: 4–5 per employee
 •	Departments: IT, Engineering, Sales, HR, Finance, Marketing, Operations, Software Development
 
-<img width="468" height="645" alt="image" src="https://github.com/user-attachments/assets/7dfdaf62-69b2-42b0-aac9-2973a8ac4415" />
-
 
 ## Quickstart
 ```bash
