@@ -5,41 +5,73 @@ An AI-Driven Framework for Promotion Assessment and Personalized Workforce Devel
 
 1. Introduction
 Organizations today manage increasingly complex and distributed workforces, making traditional performance reviews slow, subjective, and prone to bias. The Performance Review and Recommender (PRR) system introduces an AI-assisted approach to employee evaluation — integrating data from projects, feedback, learning activities, and behavioral indicators to provide:
-•	Promotion readiness scoring: Identifying employees most likely ready for advancement based on historical performance patterns.
-•	Personalized development planning: Recommending training courses, mentorships, and projects to close specific skill gaps for those not yet ready for promotion.
+  •	Promotion readiness scoring: Identifying employees most likely ready for advancement based on historical performance patterns.
+  •	Personalized development planning: Recommending training courses, mentorships, and projects to close specific skill gaps for those not yet ready for promotion.
 The PRR system supports data-driven HR decision-making while maintaining transparency, fairness, and explainability. It embodies responsible AI principles by combining machine learning analytics with human oversight in the promotion process.
 
 2. Objectives
-a.	Automate performance evaluations using structured and unstructured HR data.
-b.	Predict promotion readiness through historical pattern recognition and behavioral modeling.
-c.	Provide individualized upskilling pathways via a recommendation engine.
-d.	Support fairness and explainability, enabling HR managers to audit AI decisions.
-e.	Offer an interactive dashboard for both managers and employees to visualize insights.
+  a.	Automate performance evaluations using structured and unstructured HR data.
+  b.	Predict promotion readiness through historical pattern recognition and behavioral modeling.
+  c.	Provide individualized upskilling pathways via a recommendation engine.
+  d.	Support fairness and explainability, enabling HR managers to audit AI decisions.
+  e.	Offer an interactive dashboard for both managers and employees to visualize insights.
 
 3. System Overview
 
 3.1 Core Modules
 Module	Function
-•	Data Ingestion Layer:	Collects and integrates data from HRIS, LMS, project management, and feedback systems.
-•	Performance Evaluation Engine:	Uses machine learning models (LightGBM, CatBoost) to compute promotion readiness scores.
-•	Recommendation Engine	Matches: skill gaps with relevant courses, mentorships, and career development resources.
-•	HR Dashboard:	Provides HR managers a visual interface to view scores, approve promotions, and track learning outcomes.
-•	Employee Portal:	Displays personal progress reports, readiness scores, and recommended learning paths.
+  •	Data Ingestion Layer:	Collects and integrates data from HRIS, LMS, project management, and feedback systems.
+  •	Performance Evaluation Engine:	Uses machine learning models (LightGBM, CatBoost) to compute promotion readiness scores.
+  •	Recommendation Engine	Matches: skill gaps with relevant courses, mentorships, and career development resources.
+  •	HR Dashboard:	Provides HR managers a visual interface to view scores, approve promotions, and track learning outcomes.
+  •	Employee Portal:	Displays personal progress reports, readiness scores, and recommended learning paths.
 
 3.2 Data Sources
-•	HR Information Systems (HRIS): Employee demographics, promotions, performance history.
-•	Project Management Tools: Task completion, deadlines, quality metrics.
-•	Learning Management Systems (LMS): Completed courses, skill achievements, certifications.
-•	360° Feedback: Peer and manager reviews, sentiment analysis.
-•	Incident/Recognition Logs: Behavioral insights and achievements.
+  •	HR Information Systems (HRIS): Employee demographics, promotions, performance history.
+  •	Project Management Tools: Task completion, deadlines, quality metrics.
+  •	Learning Management Systems (LMS): Completed courses, skill achievements, certifications.
+  •	360° Feedback: Peer and manager reviews, sentiment analysis.
+  •	Incident/Recognition Logs: Behavioral insights and achievements.
 
 4. Dataset Generation and Architecture
 4.1 Synthetic Data Design
 A large synthetic dataset was generated to emulate a realistic corporate environment:
-•	Employees: 500
-•	Time Range: 10 years (2005–2014)
-•	Daily Tasks: 4–5 per employee
-•	Departments: IT, Engineering, Sales, HR, Finance, Marketing, Operations, Software Development
+  •	Employees: 500
+  •	Time Range: 10 years (2005–2014)
+  •	Daily Tasks: 4–5 per employee
+  •	Departments: IT, Engineering, Sales, HR, Finance, Marketing, Operations, Software Development
+
+4.2 Database and Models
+  •	Database: SQLite (development) / PostgreSQL (production).
+  •	ORM: SQLAlchemy (Flask-SQLAlchemy).
+  •	ML Model: LightGBM classifier with class balancing, early stopping, and isotonic calibration.
+  •	Explainability: SHAP background sampling for local feature attribution.
+  •	Recommendation Logic: Hybrid of content-based and collaborative filtering using skill taxonomies.
+
+5. AI Model Pipeline
+5.1 Feature Engineering
+Features computed per employee include:
+  •	OKR attainment and project velocity totals.
+  •	Quality mean and on-time ratio.
+  •	Feedback and recognition averages.
+  •	Learning completion count.
+  •	Incident severity weights.
+  5.2 Model Training
+  •	Algorithm: LightGBM (Gradient Boosted Decision Trees).
+  •	Validation: GroupKFold by organization unit to avoid overfitting.
+  •	Label Definition: Top 20% performers (promotion readiness) with injected noise to simulate human subjectivity.
+  •	Metrics: ROC-AUC, Average Precision, F1-Score, Precision, Recall.
+
+6. Frontend Dashboard
+A lightweight React-based dashboard provides:
+  •	Health check and connectivity testing.
+  •	Employee lookup by ID and date.
+  •	Readiness scorecard with decision color-coding.
+  •	Training and mentorship plan viewer.
+  •	Top feature factors explaining AI reasoning.
+
+The dashboard is bundled directly in templates/index.html, using React 18 + Tailwind CSS from CDN.
+
 
 
 ## Quickstart
