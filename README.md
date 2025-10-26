@@ -9,6 +9,7 @@ Organizations today manage increasingly complex and distributed workforces, maki
   •	Personalized development planning: Recommending training courses, mentorships, and projects to close specific skill gaps for those not yet ready for promotion.
 The PRR system supports data-driven HR decision-making while maintaining transparency, fairness, and explainability. It embodies responsible AI principles by combining machine learning analytics with human oversight in the promotion process.
 
+
 2. Objectives
   a.	Automate performance evaluations using structured and unstructured HR data.
   b.	Predict promotion readiness through historical pattern recognition and behavioral modeling.
@@ -19,7 +20,6 @@ The PRR system supports data-driven HR decision-making while maintaining transpa
 3. System Overview
 
 3.1 Core Modules
-Module	Function
   •	Data Ingestion Layer:	Collects and integrates data from HRIS, LMS, project management, and feedback systems.
   •	Performance Evaluation Engine:	Uses machine learning models (LightGBM, CatBoost) to compute promotion readiness scores.
   •	Recommendation Engine	Matches: skill gaps with relevant courses, mentorships, and career development resources.
@@ -48,8 +48,7 @@ A large synthetic dataset was generated to emulate a realistic corporate environ
   •	Explainability: SHAP background sampling for local feature attribution.
   •	Recommendation Logic: Hybrid of content-based and collaborative filtering using skill taxonomies.
 
-5. AI Model Pipeline
-5.1 Feature Engineering
+5. AI Model Pipeline (Feature Engineering)
 Features computed per employee include:
   •	OKR attainment and project velocity totals.
   •	Quality mean and on-time ratio.
@@ -73,7 +72,6 @@ A lightweight React-based dashboard provides:
 The dashboard is bundled directly in templates/index.html, using React 18 + Tailwind CSS from CDN.
 
 
-
 ## Quickstart
 ```bash
 python -m venv .venv
@@ -91,6 +89,7 @@ python ml/train_big.py
 # run API
 flask run
 
+
 ## Endpoints
 GET /v1/ingest/health
 POST /v1/promotion/score
@@ -99,11 +98,9 @@ GET /v1/explain/local?employee_id=1
 GET /v1/fairness/summary
 
 ## Frontend
-
 A simple, single-file React dashboard resides in templates/index.html (open /dashboard once the API is running).
 
 ## Environment
-
 Set your variables in .env (not committed). Example:
 
 FLASK_ENV=development
