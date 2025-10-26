@@ -1,4 +1,4 @@
-# Performance-Review-and-Recommender-System
+# Performance Review and Recommender (PRR) System
 
 An AI-driven service that scores employee promotion readiness and recommends personalized training plans.
 An AI-Driven Framework for Promotion Assessment and Personalized Workforce Development
