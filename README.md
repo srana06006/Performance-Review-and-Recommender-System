@@ -71,6 +71,9 @@ A lightweight React-based dashboard provides:
 
 The dashboard is bundled directly in templates/index.html, using React 18 + Tailwind CSS from CDN.
 
+<img width="1728" height="1117" alt="Screenshot 2025-10-25 at 11 13 55 PM" src="https://github.com/user-attachments/assets/efdc591d-22a6-4fd8-8ac8-a24745e8d64f" />
+
+
 
 ## Quickstart
 ```bash
